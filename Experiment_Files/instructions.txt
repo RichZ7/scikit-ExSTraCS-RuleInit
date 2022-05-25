@@ -1,0 +1,15 @@
+Instructions to run for Alexa
+
+
+1) Make sure to have all necessary modules installed (h2o is the main one to check)
+
+2) Download the rfi_skExSTraCS folder from the github and move the folder to the directory in which the main script will be run
+
+3) Install all of the python modules within the experiment files folder and move them to the same dir in which rfi_skExSTraCS is in
+
+4) Download the datasets folder and make sure that the folder is specifically named "datasets" (necessary for script to locate datasets)
+   paths to datasets should resemble something like "datasets/two_way_epi/*.txt" where "*" stands for any/all files
+   
+5) Confirm that no directory called "Results" exists, (if ran multiple times, change the name of or delete the "old" Results folder)
+
+6) Run main.py
