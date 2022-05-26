@@ -581,7 +581,7 @@ def RFI_LCS(data_path, rule_csv_path, pickle_file, continuous_attr, classLabel, 
     # gametes_drf.download_mojo('drf', get_genmodel_jar=True)
     print('t')
     varimp = gametes_drf.varimp(use_pandas=True)
-    varimp.to_csv('Results/' + str(data_path).split('/')[2].replace('.txt', '') + '/Visualizations/varimp'+str(ntrees_RFparam)+'.csv')
+    varimp.to_csv('Results/' + str(data_path).split('/')[1] + str(data_path).split('/')[2].replace('.txt', '') + '/Visualizations/rfi_varimp'+str(ntrees_RFparam)+'.csv')
 
     # Extracting Rules from RF Model
     all_p = []
