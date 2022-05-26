@@ -34,13 +34,14 @@ os.mkdir('Results')
 for data_path in targets:
     data = pd.read_csv(data_path, delimiter='\t')
     d = str(data_path).split('/')[2].replace('.txt', '')
+    f = str(data_path).split('/')[1]
     print(d)
     #     find if attributes are continous (assumes all are if there is one)
     continous_attr = isinstance(data.iloc[0, 0], float)
     #     get scores for Random Forest and RF_LCS without learning iterations
 
-    os.mkdir('Results/' + d)
-    os.mkdir('Results/' + d + '/Visualizations')
+    os.mkdir('Results/' + f + d)
+    os.mkdir('Results/' + f + d + '/Visualizations')
 
     #     tj.runRFLCS(data_path, True, continous_attr, 10, 20000)
 
@@ -97,19 +98,19 @@ for data_path in targets:
             for x in range(len(avg_score) - 1):
                 avg_score[x + 1] = avg_score[x + 1] / 1
             rfLCS_results = rfLCS_results.append(tj.listToSeries(avg_score, rfLCS_results), ignore_index=True)
-        tj.plotBar('Results/' + d + '/Visualizations/varimp' + num_trees + '.csv')
+        tj.plotBar('Results/' + f + '/' + d + '/Visualizations/varimp' + str(num_trees) + '.csv')
     #         tj.plotBar(data_path)
 
 
-    rf_results.to_csv('Results/' + d + '/rf_results.csv')
-    lcs_results.to_csv('Results/' + d + '/lcs_results.csv')
-    rf_lcs_noIter_results.to_csv('Results/' + d + '/rf_lcs_noIter_results.csv')
-    rfLCS_results.to_csv('Results/' + d + '/rfLCS_results.csv')
+    rf_results.to_csv('Results/' + f + '/' +  d + '/rf_results.csv')
+    lcs_results.to_csv('Results/' + f + d + '/lcs_results.csv')
+    rf_lcs_noIter_results.to_csv('Results/' + f + '/' + d + '/rf_lcs_noIter_results.csv')
+    rfLCS_results.to_csv('Results/' + f + '/' + d + '/rfLCS_results.csv')
 
-    tj.visAcc('Results/' + d + '/lcs_results.csv', 'lcs', d)
-    tj.visAcc('Results/' + d + '/rfLCS_results.csv', 'rfLCS', d)
+    tj.visAcc('Results/' + f + '/' + d + '/lcs_results.csv', 'lcs', d)
+    tj.visAcc('Results/' + f + '/' + d + '/rfLCS_results.csv', 'rfLCS', d)
 
-
+    #Reset Result Dataframes in Memory for Next Run
     rf_results = pd.DataFrame(
         columns=['DF_Name', 'nTrees', 'CompTime', "Accuracy", "F1", "Precision", 'Recall', 'Specificity', 'ROC_AUC'])
     lcs_results = pd.DataFrame(
