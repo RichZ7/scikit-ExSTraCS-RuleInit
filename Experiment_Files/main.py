@@ -40,8 +40,8 @@ for data_path in targets:
     continous_attr = isinstance(data.iloc[0, 0], float)
     #     get scores for Random Forest and RF_LCS without learning iterations
 
-    os.mkdir('Results/' + f + d)
-    os.mkdir('Results/' + f + d + '/Visualizations')
+    os.mkdir('Results/' + f + '/' + d)
+    os.mkdir('Results/' + f + '/' + d + '/Visualizations')
 
     #     tj.runRFLCS(data_path, True, continous_attr, 10, 20000)
 
