@@ -65,6 +65,10 @@ def runRF(data, continuous_attr, nTrees):
     ROC_AUC = gametes_drf.auc()
     b_accuracy = (Recall.pop().pop() + Specificity.pop().pop())/2
 
+    varimp = gametes_drf.varimp(use_pandas=True)
+    varimp.to_csv('Results/' + str(data).split('/')[1] + '/' + str(data).split('/')[2].replace('.txt', '') + '/Visualizations/varimp' + str(nTrees)+ '.csv')
+    plotBar('Results/' + str(data).split('/')[1] + '/' + str(data).split('/')[2].replace('.txt', '') + '/Visualizations/varimp' + str(nTrees)+ '.csv')
+
 
     return [data, nTrees, compTime, b_accuracy, F1.pop().pop(), Precision.pop().pop(), Rec1, Specif1, ROC_AUC]
 
@@ -96,6 +100,7 @@ def runLCS(data, learning_iter):
 
     # model.export_final_rule_population(ds.drop('Class',axis=1).columns.values, 'Class', filename="fileRulePopulation.csv",DCAL=False)
 
+    visualize(model, data, ds, train, 'lcs')
 
     pred = model.predict(X_test)
 
@@ -141,6 +146,8 @@ def runRFLCS(data, LCS_param, continuous_attr, ntrees, nIterations):
     headers, classLabel, dataFeatures, dataPhenotypes = converter.get_params()
     RFLCS_nr = lcs.fit(X = dataFeatures,y = dataPhenotypes)
     # print(str(RFLCS_nr.get_final_attribute_tracking_sums())+'\n'+str(ntrees))
+
+    visualize(RFLCS_nr, data, train, train, 'rfilcs')
 
     instanceLabels = []
     for i in range(dataFeatures.shape[0]):
@@ -230,7 +237,7 @@ def listToSeries(to_append, df):
     a_series = pd.Series(to_append, index=df.columns)
     return a_series
 
-def visualize(model, data, ds, train):
+def visualize(model, data, ds, train, alg):
     # print('Visualizing:  ')
     dataFeatures = train.to_numpy()
     instanceLabels = []
@@ -260,7 +267,7 @@ def visualize(model, data, ds, train):
     important_features = []
     unimportant_features = []
     for i in range(len(sum)):
-        if (sum[i] > average_score_sum):
+        if (sum[i] >= average_score_sum):
             important_features.append(i)
         else:
             unimportant_features.append(i)
@@ -269,6 +276,7 @@ def visualize(model, data, ds, train):
     for i in range(len(sum)):
         if i in important_features:
             average_score_sum += sum[i]
+    print(important_features)
     average_score_sum = average_score_sum / len(important_features)
     important_features = []
     for i in range(len(sum)):
@@ -306,7 +314,10 @@ def visualize(model, data, ds, train):
     #     plt.savefig('results/resultsOverIterations/lcs_scores_visualization.png')
     # elif os.path.isfile('results/resultsOverIterations/instance_scores.png'):
     #     plt.savefig('results/resultsOverIterations/lcs_scores_visualization1.png')
-    plt.savefig('Results/' + str(data).split('/')[2].replace('.txt', '') + '/Visualizations/lcs_scores_visualization.png')
+    if alg == 'lcs':
+        plt.savefig('Results/' + str(data).split('/')[1] + '/' + str(data).split('/')[2].replace('.txt', '') + '/Visualizations/lcs_scores_visualization.png')
+    else:
+        plt.savefig('Results/' + str(data).split('/')[1] + '/' + str(data).split('/')[2].replace('.txt', '') + '/Visualizations/rfilcs_scores_visualization.png')
 
 
     figure_lcs_score.clear()
@@ -316,13 +327,18 @@ def visualize(model, data, ds, train):
     ax1.set_xlabel("Instances")
     ax1.set_ylabel("AT Scores")
     ax1.plot(iterations, only_scores)
-    figure_instance_score.suptitle(data + ": Attribute Performance Scores")
+    figure_instance_score.suptitle(str(data).split('/')[2].replace('.txt', '') + ": Attribute Performance Scores")
     ax1.legend(features)
     # if os.path.isfile('results/resultsOverIterations/instance_scores.png') == False:
     #     plt.savefig('results/resultsOverIterations/instance_scores.png')
     # elif os.path.isfile('results/resultsOverIterations/instance_scores.png'):
     #     plt.savefig('results/resultsOverIterations/instance_scores1.png')
-    plt.savefig('results/' + str(data).split('/')[2].replace('.txt', '') + '/Visualizations/lcs_instance_scores.png')
+    if alg == 'lcs':
+        plt.savefig('results/' + str(data).split('/')[1] +'/'+str(data).split('/')[2].replace('.txt', '') + '/Visualizations/lcs_instance_scores.png')
+    else:
+        plt.savefig('Results/' + str(data).split('/')[1] + '/' + str(data).split('/')[2].replace('.txt', '') + '/Visualizations/rfilcs_scores_visualization.png')
+
+
 
 def histogram_intersection(a, b):
     v = np.minimum(a, b).sum().round(decimals=1)
@@ -359,7 +375,7 @@ def visAcc(path, alg_type, s_path):
             # print(data.iloc[0,0])
             print(data.head(10))
             fig.suptitle(data.iloc[0, 0] + '   LCS   ' + str(d))
-            plt.savefig('Results/' + s_path + '/Visualizations/lcs_linePlt' + str(i) + '.png')
+            plt.savefig('Results/' + str(path).split('/')[1] + '/' + s_path + '/Visualizations/lcs_linePlt' + str(i) + '.png')
 
             # df = data.iloc[len:, :]
             # # name = df.iloc[0, 0]
@@ -411,7 +427,7 @@ def visAcc(path, alg_type, s_path):
             ax.set_xlabel('nIterations')
             fig.suptitle(data.iloc[0,0] + '   RFLCS   ' + str(d))
             # plt.savefig('results/resultsOverIterations/rfi_lcs_heatmap_iter' + str(i) + '.png')
-            plt.savefig('Results/' + s_path + '/Visualizations/rfi_lcs_heatmap_iter' + str(i) + '.png')
+            plt.savefig('Results/' + str(path).split('/')[1] + '/' + s_path + '/Visualizations/rfi_lcs_heatmap_iter' + str(i) + '.png')
 
         # df.head()
         # df = data.loc[len:, : ]
